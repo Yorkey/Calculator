@@ -52,7 +52,7 @@ class CalculatorApp extends Component {
         for (let i = 0; i < calculateListLength; ++i) {
             let currency = this.props.currencyList[this.props.showList[i]];
             currencyViewList.push(
-                <View ref={currency.key} key={currency.key+i} style={styles.calculateItem}>
+                <View ref={currency.key} key={currency.key+i} style={this.props.highlightLine === i ? styles.highlightItem : styles.calculateItem}>
                     <TouchableOpacity style={styles.currencyIconContainer} onPress={() => this.refs.CurrencyListModal.show(i)}>
                         <Image style={styles.currencyIcon} resizeMode="stretch" source={currency.icon}/>
                     </TouchableOpacity>
@@ -134,6 +134,16 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         height: 60,
         backgroundColor: '#ffffff',
+        borderWidth: 0,
+    },
+    highlightItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        height: 75,
+        backgroundColor: '#ffffff',
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderColor: '#4ad9f8'
     },
     currencyIconContainer: {
         width: 50,
