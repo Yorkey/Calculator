@@ -19,6 +19,7 @@ import CurrencyListModal from './CurrencyListModal';
 import {connect} from 'react-redux';
 import Utils from './utils';
 import {highlightSelectLine, calculateMoney, updateCurrencyList} from './actions/currency';
+import codePush from 'react-native-code-push';
 
 class CalculatorApp extends Component {
 
@@ -212,5 +213,5 @@ function select(store) {
     };
 }
 
-export default connect(select)(CalculatorApp);
+export default codePush(connect(select)(CalculatorApp));
 //module.exports = connect(CalculatorApp);
