@@ -6,6 +6,8 @@ import {View, Text} from 'react-native';
 import {Provider} from 'react-redux';
 import {configureStore} from './store/configureStore';
 import CalculatorApp from './CalculatorApp';
+import enhance from './mixin/Enhance';
+let CalculatorAppEnhance = enhance(CalculatorApp);
 
 export default class Root extends Component {
 
@@ -31,7 +33,7 @@ export default class Root extends Component {
         }
         return (
             <Provider store={this.state.store}>
-                <CalculatorApp />
+                <CalculatorAppEnhance />
             </Provider>
         );
     }

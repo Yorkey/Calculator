@@ -11,11 +11,13 @@ import {
     ScrollView,
     TouchableOpacity,
     Dimensions,
-    ListView,
-    InteractionManager
+    InteractionManager,
+    ToastAndroid,
+    BackAndroid
 } from 'react-native';
 import HorizontalMarginLine from './common/HorizontalMarginLine';
-import CurrencyListModal from './CurrencyListModal';
+//import CurrencyListModal from './CurrencyListModal';
+import CurrencyListPopup from './CurrencyListPopup';
 import {connect} from 'react-redux';
 import Utils from './utils';
 import {highlightSelectLine, calculateMoney, updateCurrencyList} from './actions/currency';
@@ -47,6 +49,7 @@ class CalculatorApp extends Component {
     }
 
 
+
     getCurrencyViewList() {
         let currencyViewList = [];
         let calculateListLength = this.props.showList.length;
@@ -54,7 +57,7 @@ class CalculatorApp extends Component {
             let currency = this.props.currencyList[this.props.showList[i]];
             currencyViewList.push(
                 <View ref={currency.key} key={currency.key+i} style={this.props.highlightLine === i ? styles.highlightItem : styles.calculateItem}>
-                    <TouchableOpacity style={styles.currencyIconContainer} onPress={() => this.refs.CurrencyListModal.show(i)}>
+                    <TouchableOpacity style={styles.currencyIconContainer} onPress={() => this.refs.CurrencyListPopup.open(i)}>
                         <Image style={styles.currencyIcon} resizeMode="stretch" source={currency.icon}/>
                     </TouchableOpacity>
                     <Text style={styles.currencyName}>{currency.name}</Text>
@@ -72,6 +75,23 @@ class CalculatorApp extends Component {
         }
 
         return currencyViewList;
+    }
+
+    componentDidMount() {
+        BackAndroid.addEventListener('hardwareBackPress', () => {
+
+            if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+                //最近2秒内按过back键，可以退出应用。
+                return false;
+            }
+            this.lastBackPressed = Date.now();
+            ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
+            return true;
+        });
+    }
+
+    componentWillUnmount() {
+        //BackAndroid.removeEventListener('hardwareBackPress');
     }
 
 
@@ -109,9 +129,12 @@ class CalculatorApp extends Component {
                         null
                 }
 
-                <CurrencyListModal {...this.props} ref="CurrencyListModal" />
-
-
+                {
+                    // <CurrencyListModal {...this.props} ref="CurrencyListModal" />
+                }
+                {
+                     <CurrencyListPopup {...this.props} ref="CurrencyListPopup" />
+                }
 
             </View>
         );
@@ -128,7 +151,7 @@ var styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 15,
         marginRight: 15,
-        elevation: 2,
+        //elevation: 2,
     },
     calculateItem: {
         flexDirection: 'row',
