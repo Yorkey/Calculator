@@ -46,6 +46,17 @@ class CalculatorApp extends Component {
             this.props.dispatch(highlightSelectLine(0));
             this.props.dispatch(updateCurrencyList());
         });
+
+        BackAndroid.addEventListener('hardwareBackPress', () => {
+
+            if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+                //最近2秒内按过back键，可以退出应用。
+                return false;
+            }
+            this.lastBackPressed = Date.now();
+            ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
+            return true;
+        });
     }
 
 
@@ -75,23 +86,6 @@ class CalculatorApp extends Component {
         }
 
         return currencyViewList;
-    }
-
-    componentDidMount() {
-        BackAndroid.addEventListener('hardwareBackPress', () => {
-
-            if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
-                //最近2秒内按过back键，可以退出应用。
-                return false;
-            }
-            this.lastBackPressed = Date.now();
-            ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
-            return true;
-        });
-    }
-
-    componentWillUnmount() {
-        //BackAndroid.removeEventListener('hardwareBackPress');
     }
 
 
