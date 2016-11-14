@@ -22,6 +22,7 @@ import {connect} from 'react-redux';
 import Utils from './utils';
 import {highlightSelectLine, calculateMoney, updateCurrencyList} from './actions/currency';
 import codePush from 'react-native-code-push';
+import KeyBoard from './KeyBoard';
 
 class CalculatorApp extends Component {
 
@@ -96,6 +97,8 @@ class CalculatorApp extends Component {
                     {this.getCurrencyViewList()}
                 </ScrollView>
 
+                <KeyBoard style={styles.keyboard} onPress={(payload) => console.warn(payload.type)} />
+
                 {
                     this.props.updateState == 'loading'
                         ?
@@ -159,8 +162,7 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         height: 75,
         backgroundColor: '#ffffff',
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderWidth: StyleSheet.hairlineWidth*2,
         borderColor: '#4ad9f8'
     },
     currencyIconContainer: {
@@ -221,6 +223,11 @@ var styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 13,
         color: '#fff',
+    },
+    keyboard: {
+        height: 200,
+        marginBottom: 40,
+        backgroundColor: '#fff',
     }
 });
 
