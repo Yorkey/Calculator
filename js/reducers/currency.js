@@ -13,6 +13,7 @@ const currencyList = [
 ];
 
 const showList = [0, 1, 2, 3];
+export const showListLength = showList.length;
 
 const initialState = {
     highlightLine: 0,
@@ -95,4 +96,4 @@ function calculator(state = initialState, action) {
     }
 }
 
-module.exports = calculator;
+export default calculator;

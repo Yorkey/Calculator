@@ -5,8 +5,8 @@ import { AsyncStorage } from 'react-native';
 import {applyMiddleware, createStore, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
 import {persistStore, autoRehydrate} from 'redux-persist';
+import currencyReducers from '../reducers/currency';
 var createLogger = require('redux-logger');
-var currencyReducers = require('../reducers/currency.js');
 
 
 let logger = createLogger({
