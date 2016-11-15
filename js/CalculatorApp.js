@@ -69,7 +69,7 @@ class CalculatorApp extends Component {
                 this.onSelectLine(nextLine);
                 break;
             default:
-                console.warn(`Unknow key type ${payload.type}`);
+                console.warn(`Unknown key type ${payload.type}`);
         }
     }
 
