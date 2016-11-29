@@ -49,7 +49,8 @@ export default class KeyBoard extends Component {
                     <KeyButton style={styles.numKey} payload={keyMap[3]} onPress={this.props.onPress}/>
                 </View>
                 <View style={styles.numKeyLine}>
-                    <KeyButton style={styles.numKeyFixed} payload={keyMap[0]} onPress={this.props.onPress}/>
+                    <KeyButton style={styles.numKey} payload={keyMap["blank"]} onPress={this.props.onPress}/>
+                    <KeyButton style={styles.numKey} payload={keyMap[0]} onPress={this.props.onPress}/>
                     <KeyButton style={styles.numKey} payload={keyMap["dot"]} onPress={this.props.onPress}/>
                 </View>
             </View>

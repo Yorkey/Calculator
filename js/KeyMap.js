@@ -45,21 +45,28 @@ const keyMap = {
     },
     dot: {
         type: "dot",
-        text: "."
+        text: ".",
+        icon: require('./asset/dot.png')
     },
     "delete": {
         type: "delete",
-        text: "Del"
+        text: "Del",
+        icon: require('./asset/delete.png')
     },
     "clear": {
         type: "clear",
-        text: "C"
+        text: "C",
+        icon: require('./asset/C.png')
     },
     "tab": {
         type: "tab",
-        text: "Tab"
+        text: "Tab",
+        icon: require('./asset/tab.png')
+    },
+    "blank": {
+        type: "blank",
+        text: " "
     }
-
 };
 
 export default keyMap;

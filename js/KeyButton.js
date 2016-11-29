@@ -20,7 +20,7 @@ export default class KeyButton extends Component {
         if (payload && payload.icon) {
             content = (
                 <View style={[styles.button, this.props.style]}>
-                    <Image source={payload.icon} />
+                    <Image style={styles.icon} source={payload.icon} />
                 </View>
             );
         } else if (payload && payload.text) {
@@ -51,6 +51,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 22,
+        color: '#333333',
+    },
+    icon: {
+        width: 25,
+        height: 25,
     }
 });

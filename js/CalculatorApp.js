@@ -107,9 +107,9 @@ class CalculatorApp extends Component {
                     <TouchableOpacity style={styles.currencyIconContainer} onPress={() => this.refs.CurrencyListPopup.open(i)}>
                         <Image style={styles.currencyIcon} resizeMode="stretch" source={currency.icon}/>
                     </TouchableOpacity>
-                    <Text style={styles.currencyName}>{currency.name}</Text>
+                    <Text style={[styles.currencyName, this.props.highlightLine === i ? styles.highlightColor : null]}>{currency.name}</Text>
 
-                    <Text style={styles.currencyInput}>{currency.money}</Text>
+                    <Text style={[styles.currencyInput, this.props.highlightLine === i ? styles.highlightColor : null]}>{currency.money}</Text>
 
                 </TouchableOpacity>
             );
@@ -185,15 +185,15 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         height: 60,
         backgroundColor: '#ffffff',
-        borderWidth: 0,
     },
     highlightItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        height: 75,
+        height: 70,
         backgroundColor: '#ffffff',
-        borderWidth: StyleSheet.hairlineWidth*2,
-        borderColor: '#4ad9f8'
+    },
+    highlightColor: {
+        color: '#ff7f50',
     },
     currencyIconContainer: {
         width: 50,
@@ -259,5 +259,5 @@ function select(store) {
     };
 }
 
-export default codePush(connect(select)(CalculatorApp));
+export default codePush({ updateDialog: true, installMode: codePush.InstallMode.IMMEDIATE })(connect(select)(CalculatorApp));
 //module.exports = connect(CalculatorApp);
