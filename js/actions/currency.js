@@ -11,6 +11,13 @@ function highlightSelectLine(index: Number) {
     }
 }
 
+function highlightIcon(index: Number) {
+    return {
+        type: 'HIGHLIGHT_ICON',
+        index,
+    }
+}
+
 function calculateMoney(money: String) {
     return {
         type: 'CALCULATE_MONEY',
@@ -66,4 +73,4 @@ function updateCurrencyList() {
     }
 }
 
-export {highlightSelectLine, calculateMoney, changeShowList, updateCurrencyList};
+export {highlightSelectLine, highlightIcon, calculateMoney, changeShowList, updateCurrencyList};

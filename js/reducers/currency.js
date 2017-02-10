@@ -18,6 +18,7 @@ export const showListLength = showList.length;
 const initialState = {
     highlightLine: 0,
     highlightMoney: 0,
+    highlightIcon: -1,
     updateState: 'none',
     updateError: '',
     updateTime: 0,
@@ -46,6 +47,10 @@ function calculator(state = initialState, action) {
             return Object.assign({}, state, {
                 highlightLine: action.index,
                 currencyList: newList,
+            });
+        case 'HIGHLIGHT_ICON':
+            return Object.assign({}, state, {
+                highlightIcon: action.index,
             });
         case 'CALCULATE_MONEY':
             highlightCurrency = state.currencyList[state.showList[state.highlightLine]];

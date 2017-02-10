@@ -20,7 +20,7 @@ import HorizontalMarginLine from './common/HorizontalMarginLine';
 import CurrencyListPopup from './CurrencyListPopup';
 import {connect} from 'react-redux';
 import Utils from './utils';
-import {highlightSelectLine, calculateMoney, updateCurrencyList} from './actions/currency';
+import {highlightSelectLine, highlightIcon, calculateMoney, updateCurrencyList} from './actions/currency';
 import codePush from 'react-native-code-push';
 import KeyBoard from './KeyBoard';
 import {showListLength} from './reducers/currency';
@@ -31,6 +31,10 @@ class CalculatorApp extends Component {
     constructor(props) {
         super(props);
 
+        this.currencyListPopupRef = null;
+
+        this.onPopupClosed = this.onPopupClosed.bind(this);
+        this.onIconClick = this.onIconClick.bind(this);
     }
 
 
@@ -41,6 +45,15 @@ class CalculatorApp extends Component {
 
     onSelectLine(index) {
         this.props.dispatch(highlightSelectLine(index));
+    }
+
+    onIconClick(index) {
+        this.currencyListPopupRef.open(index);
+        this.props.dispatch(highlightIcon(index));
+    }
+
+    onPopupClosed() {
+        this.props.dispatch(highlightIcon(-1));
     }
 
     onKeyClick(payload) {
@@ -104,8 +117,8 @@ class CalculatorApp extends Component {
                                   style={this.props.highlightLine === i ? styles.highlightItem : styles.calculateItem}
                                   activeOpacity={0.8}
                                   onPress={() => this.onSelectLine(i)}>
-                    <TouchableOpacity style={styles.currencyIconContainer} onPress={() => this.refs.CurrencyListPopup.open(i)}>
-                        <Image style={styles.currencyIcon} resizeMode="stretch" source={currency.icon}/>
+                    <TouchableOpacity onPress={() => this.onIconClick(i)}>
+                        <Image style={[styles.currencyIcon, this.props.highlightIcon === i ? styles.highlightIcon : null]} resizeMode="stretch" source={currency.icon}/>
                     </TouchableOpacity>
                     <Text style={[styles.currencyName, this.props.highlightLine === i ? styles.highlightColor : null]}>{currency.name}</Text>
 
@@ -160,7 +173,7 @@ class CalculatorApp extends Component {
 
                 {
                     // <CurrencyListModal {...this.props} ref="CurrencyListModal" />
-                     <CurrencyListPopup {...this.props} ref="CurrencyListPopup" />
+                     <CurrencyListPopup {...this.props} ref={(ref) => this.currencyListPopupRef = ref} onClosed={this.onPopupClosed} />
                 }
 
             </View>
@@ -195,14 +208,15 @@ var styles = StyleSheet.create({
     highlightColor: {
         color: '#ff7f50',
     },
-    currencyIconContainer: {
+    currencyIcon: {
         width: 50,
         height: 30,
         marginLeft: 14,
     },
-    currencyIcon: {
-        width: 50,
-        height: 30,
+    highlightIcon: {
+        padding: 1,
+        borderWidth: 1,
+        borderColor: "#ff7f50",
     },
     currencyName: {
         width: 70,
@@ -259,5 +273,6 @@ function select(store) {
     };
 }
 
-export default codePush({ updateDialog: true, installMode: codePush.InstallMode.IMMEDIATE })(connect(select)(CalculatorApp));
+export default codePush((connect(select)(CalculatorApp)));
+//export default codePush({ updateDialog: true, installMode: codePush.InstallMode.IMMEDIATE })(connect(select)(CalculatorApp));
 //module.exports = connect(CalculatorApp);

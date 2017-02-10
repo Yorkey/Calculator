@@ -21,7 +21,7 @@ let createCalculatorAppStore = applyMiddleware(thunk, logger)(createStore);
 
 function configureStore(onComplete) {
     let store = autoRehydrate()(createCalculatorAppStore)(reducers);
-    persistStore(store, {storage: AsyncStorage}, onComplete);
+    persistStore(store, {blacklist:["highlightIcon"], storage: AsyncStorage}, onComplete);
     return store;
 }
 
