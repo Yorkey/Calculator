@@ -6,21 +6,21 @@ import {
     StyleSheet,
     View,
     Text,
-    TextInput,
     Image,
     ScrollView,
     TouchableOpacity,
     Dimensions,
     InteractionManager,
     ToastAndroid,
-    BackAndroid
+    BackAndroid,
+    AsyncStorage
 } from 'react-native';
 import HorizontalMarginLine from './common/HorizontalMarginLine';
 //import CurrencyListModal from './CurrencyListModal';
 import CurrencyListPopup from './CurrencyListPopup';
 import {connect} from 'react-redux';
 import Utils from './utils';
-import {highlightSelectLine, highlightIcon, calculateMoney, updateCurrencyList} from './actions/currency';
+import {highlightSelectLine, highlightIcon, calculateMoney, updateCurrencyList, closeShopTip} from './actions/currency';
 import codePush from 'react-native-code-push';
 import KeyBoard from './KeyBoard';
 import {showListLength} from './reducers/currency';
@@ -31,10 +31,15 @@ class CalculatorApp extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            showTip: this.props.showTip,
+        };
+
         this.currencyListPopupRef = null;
 
         this.onPopupClosed = this.onPopupClosed.bind(this);
         this.onIconClick = this.onIconClick.bind(this);
+        this.onTipClicked = this.onTipClicked.bind(this);
     }
 
 
@@ -54,6 +59,12 @@ class CalculatorApp extends Component {
 
     onPopupClosed() {
         this.props.dispatch(highlightIcon(-1));
+    }
+
+    onTipClicked() {
+        this.setState({
+            showTip: false,
+        });
     }
 
     onKeyClick(payload) {
@@ -102,6 +113,10 @@ class CalculatorApp extends Component {
             ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
             return true;
         });
+
+        if (this.props.showTip) {
+            this.props.dispatch(closeShopTip());
+        }
     }
 
 
@@ -176,6 +191,16 @@ class CalculatorApp extends Component {
                      <CurrencyListPopup {...this.props} ref={(ref) => this.currencyListPopupRef = ref} onClosed={this.onPopupClosed} />
                 }
 
+                {
+                    this.state.showTip &&
+                    <TouchableOpacity style={styles.tipBackground} activeOpacity={1.0} onPress={this.onTipClicked}>
+                        <View style={styles.tipContainer}>
+                            <Image style={styles.tipArrow} source={require("./asset/tip-arrow.png")}/>
+                            <Text style={styles.tipText}>点击图标可前后币种</Text>
+                        </View>
+                    </TouchableOpacity>
+                }
+
             </View>
         );
     }
@@ -210,7 +235,7 @@ var styles = StyleSheet.create({
     },
     currencyIcon: {
         width: 50,
-        height: 30,
+        height: 33,
         marginLeft: 14,
     },
     highlightIcon: {
@@ -264,6 +289,28 @@ var styles = StyleSheet.create({
     keyboard: {
         height: 200,
         backgroundColor: '#fff',
+    },
+    tipBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0.8)'
+    },
+    tipContainer: {
+        flexDirection: "row",
+        position: 'absolute',
+        top: 133,
+        left: 30,
+    },
+    tipArrow: {
+        width: 104,
+        height: 70,
+    },
+    tipText: {
+        fontSize: 18,
+        color: "rgba(255,255,255,0.8)",
     }
 });
 

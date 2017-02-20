@@ -54,6 +54,13 @@ function fetchQuoteListFailed(error: String) {
     }
 }
 
+function closeShopTip(error: String) {
+    return {
+        type: 'SET_SHOW_TIP',
+        showTip: false,
+    }
+}
+
 
 function updateCurrencyList() {
     return (dispatch) => {
@@ -73,4 +80,4 @@ function updateCurrencyList() {
     }
 }
 
-export {highlightSelectLine, highlightIcon, calculateMoney, changeShowList, updateCurrencyList};
+export {highlightSelectLine, highlightIcon, calculateMoney, changeShowList, updateCurrencyList, closeShopTip};

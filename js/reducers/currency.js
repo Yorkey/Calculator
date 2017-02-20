@@ -10,6 +10,12 @@ const currencyList = [
     {name: '日元', icon: require('../asset/country-icon/JPY.png'), key: 'JPY', rate: 1.0, money:"0"},
     {name: '欧元', icon: require('../asset/country-icon/EUR.png'), key: 'EUR', rate: 1.0, money:"0"},
     {name: '英镑', icon: require('../asset/country-icon/GBP.png'), key: 'GBP', rate: 1.0, money:"0"},
+    {name: '泰铢', icon: require('../asset/country-icon/THB.png'), key: 'THB', rate: 1.0, money:"0"},
+    {name: '韩元', icon: require('../asset/country-icon/KRW.png'), key: 'KRW', rate: 1.0, money:"0"},
+    {name: '加元', icon: require('../asset/country-icon/CAD.png'), key: 'CAD', rate: 1.0, money:"0"},
+    {name: '印尼盾', icon: require('../asset/country-icon/IDR.png'), key: 'IDR', rate: 1.0, money:"0"},
+    {name: '新加坡元', icon: require('../asset/country-icon/SGD.png'), key: 'SGD', rate: 1.0, money:"0"},
+    {name: '澳元', icon: require('../asset/country-icon/AUD.png'), key: 'AUD', rate: 1.0, money:"0"},
 ];
 
 const showList = [0, 1, 2, 3];
@@ -24,6 +30,7 @@ const initialState = {
     updateTime: 0,
     currencyList: currencyList,
     showList: showList,
+    showTip: true,
 };
 
 function calculator(state = initialState, action) {
@@ -78,14 +85,17 @@ function calculator(state = initialState, action) {
         case 'FETCH_QUOTE_LIST':
             return Object.assign({}, state, {updateState: 'loading'});
         case 'RECEIVE_QUOTE_LIST':
-            newList = state.currencyList.map((currency, index) => {
+            newList = currencyList.map((currency, index) => {
                 for (let quote of action.quoteList) {
                     if (quote.resource.fields.name == 'USD/'+currency.key) {
-                        return Object.assign({}, currency, {rate: Number(quote.resource.fields.price)});
+                        return Object.assign({}, currency, {
+                            rate: Number(quote.resource.fields.price),
+                            money: state.currencyList[index].money
+                        });
                     }
                 }
                 return Object.assign({}, currency);
-            })
+            });
             return Object.assign({}, state, {
                 updateState: 'loaded',
                 updateTime: new Date().getTime(),
@@ -95,6 +105,10 @@ function calculator(state = initialState, action) {
             return Object.assign({}, state, {
                 updateState: 'loadFailed',
                 updateError: action.error,
+            });
+        case 'SET_SHOW_TIP':
+            return Object.assign({}, state, {
+                showTip: action.showTip,
             });
         default:
             return state;
