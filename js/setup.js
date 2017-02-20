@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import {configureStore} from './store/configureStore';
 import CalculatorApp from './CalculatorApp';
 import enhance from './mixin/Enhance';
+import SplashScreen from 'react-native-splash-screen';
 let CalculatorAppEnhance = enhance(CalculatorApp);
 
 export default class Root extends Component {
@@ -20,7 +21,9 @@ export default class Root extends Component {
             store: configureStore(() => {
                 this.setState({
                     isLoading: false,
-                });
+                }, () => {
+					SplashScreen.hide();//关闭启动屏幕
+				});
             }),
         };
     }
