@@ -196,7 +196,7 @@ class CalculatorApp extends Component {
                     <TouchableOpacity style={styles.tipBackground} activeOpacity={1.0} onPress={this.onTipClicked}>
                         <View style={styles.tipContainer}>
                             <Image style={styles.tipArrow} source={require("./asset/tip-arrow.png")}/>
-                            <Text style={styles.tipText}>点击图标可前后币种</Text>
+                            <Text style={styles.tipText}>点击图标可切换币种</Text>
                         </View>
                     </TouchableOpacity>
                 }

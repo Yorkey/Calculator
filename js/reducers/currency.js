@@ -90,7 +90,7 @@ function calculator(state = initialState, action) {
                     if (quote.resource.fields.name == 'USD/'+currency.key) {
                         return Object.assign({}, currency, {
                             rate: Number(quote.resource.fields.price),
-                            money: state.currencyList[index].money
+                            money: index < state.currencyList.length ? state.currencyList[index].money : "0",
                         });
                     }
                 }
