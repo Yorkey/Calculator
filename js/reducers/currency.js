@@ -86,6 +86,12 @@ function calculator(state = initialState, action) {
             return Object.assign({}, state, {updateState: 'loading'});
         case 'RECEIVE_QUOTE_LIST':
             newList = currencyList.map((currency, index) => {
+                if (currency.key == "USD") {
+                    return Object.assign({}, currency, {
+                        rate: 1.0,
+                        money: index < state.currencyList.length ? state.currencyList[index].money : "0",
+                    });
+                }
                 for (let quote of action.quoteList) {
                     if (quote.resource.fields.name == 'USD/'+currency.key) {
                         return Object.assign({}, currency, {
