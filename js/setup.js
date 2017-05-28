@@ -15,6 +15,9 @@ export default class Root extends Component {
     // 构造
     constructor(props) {
         super(props);
+
+        console.warn("root");
+
         // 初始状态
         this.state = {
             isLoading: true,
