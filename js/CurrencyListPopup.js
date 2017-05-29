@@ -9,7 +9,7 @@ import {
     Image,
     TouchableOpacity,
     Dimensions,
-    ListView,
+    FlatList,
     InteractionManager
 } from 'react-native';
 
@@ -17,87 +17,51 @@ import HorizontalMarginLine from './common/HorizontalMarginLine';
 import HorizontalLine from './common/HorizontalLine';
 import Button from 'react-native-button';
 import {changeShowList} from './actions/currency';
-var Modal = require("react-native-modalbox");
+let Modal = require("react-native-modalbox");
+
+function CurrencyItem({item, index, onPress}) {
+
+    return (
+        <TouchableOpacity style={styles.listItem} activeOpacity={0.8} onPress={() => onPress && onPress(index)}>
+            <Image style={styles.currencyIcon} resizeMode="stretch" source={item.icon} />
+            <Text style={styles.currencyName}>{item.name}</Text>
+            <Text style={styles.currencyRate}>{item.rate.toFixed(3)}</Text>
+        </TouchableOpacity>
+    );
+}
 
 export default class CurrencyListModal extends Component {
-
 
     // 构造
     constructor(props) {
         super(props);
 
-        this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 });
-
-        // 初始状态
-        this.state = {
-            currencySource: this.ds.cloneWithRows(this.props.currencyList),
-        };
-
         this.selectLine = 0;
-
-        this.renderRow = this.renderRow.bind(this);
-        this.renderSeparator = this.renderSeparator.bind(this);
-        this.close = this.close.bind(this);
     }
 
-
-
-
-    onListItemClick(index) {
+    onListItemClick = (index) => {
         this.refs.popup.close();
         InteractionManager.runAfterInteractions(() => {
             this.props.dispatch(changeShowList(this.selectLine, index));
         });
-    }
+    };
 
-    open(selectLine) {
+    open = (selectLine) => {
         this.selectLine = selectLine;
         this.refs.popup.open();
-    }
+    };
 
-    close() {
+    close = () => {
         this.refs.popup.close();
-    }
+    };
 
-
-    renderSeparator(sectionID:number, rowID:number) {
-
-        if (rowID == this.props.currencyList.length-1) {
-            return <HorizontalLine key={`${sectionID}-${rowID}`} />;
-        } else {
-            return <HorizontalMarginLine key={`${sectionID}-${rowID}`}/>;
-        }
-    }
-
-    renderHeader() {
-        return (
-            <View style={styles.header}>
-                <Text style={styles.title}>选择币种 </Text>
-                <HorizontalLine />
-            </View>
-        );
-    }
-
-    renderRow(rowData, sectionID, rowID, highlightRow) {
-        return (
-          <TouchableOpacity style={styles.listItem} activeOpacity={0.8} onPress={() => this.onListItemClick(rowID)}>
-              <Image style={styles.currencyIcon} resizeMode="stretch" source={rowData.icon} />
-              <Text style={styles.currencyName}>{rowData.name}</Text>
-              <Text style={styles.currencyRate}>{rowData.rate.toFixed(3)}</Text>
-          </TouchableOpacity>
-        );
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.currencyList != this.props.currencyList) {
-            this.state = {
-                currencySource: this.ds.cloneWithRows(nextProps.currencyList),
-            };
-        }
-    }
+    renderItem = ({item, index}) => {
+        return <CurrencyItem item={item} index={index} onPress={this.onListItemClick} />;
+    };
 
     render() {
-        let height = this.props.currencyList.length < 5 ? this.props.currencyList.length*50+2+28+44 : 280;
+        let { currencyList } = this.props;
+        let height = currencyList.length < 5 ? currencyList.length*50+2+28+44 : 280;
         return (
             <Modal ref="popup" style={[styles.container, {height: height}]}
                    position="bottom"
@@ -111,11 +75,10 @@ export default class CurrencyListModal extends Component {
                     </View>
                     <HorizontalLine />
                 </View>
-                <ListView style={styles.currencyList}
-                          dataSource={this.state.currencySource}
-                          renderRow={this.renderRow}
-                          //renderHeader={this.renderHeader}
-                          renderSeparator={this.renderSeparator}/>
+                <FlatList data={currencyList}
+                          renderItem={this.renderItem}
+                          ItemSeparatorComponent={HorizontalMarginLine}
+                          ListFooterComponent={HorizontalLine}/>
                 <HorizontalLine />
                 <Button containerStyle={styles.cancelButtonContainer} style={styles.cancelButtonText} onPress={this.close}>
                     取消
@@ -125,7 +88,7 @@ export default class CurrencyListModal extends Component {
     }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         backgroundColor:'#fff',
         width:Dimensions.get('window').width,

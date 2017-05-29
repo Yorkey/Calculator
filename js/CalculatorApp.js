@@ -9,14 +9,11 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
-    Dimensions,
     InteractionManager,
     ToastAndroid,
-    BackAndroid,
-    AsyncStorage
+    BackHandler,
 } from 'react-native';
 import HorizontalMarginLine from './common/HorizontalMarginLine';
-//import CurrencyListModal from './CurrencyListModal';
 import CurrencyListPopup from './CurrencyListPopup';
 import {connect} from 'react-redux';
 import Utils from './utils';
@@ -103,7 +100,7 @@ class CalculatorApp extends Component {
             this.props.dispatch(updateCurrencyList());
         });
 
-        BackAndroid.addEventListener('hardwareBackPress', () => {
+        BackHandler.addEventListener('hardwareBackPress', () => {
 
             if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
                 //最近2秒内按过back键，可以退出应用。
@@ -152,8 +149,9 @@ class CalculatorApp extends Component {
 
     render() {
 
+        let {dispatch, updateState, updateError, updateTime} = this.props;
         let stateBar;
-        if (this.props.updateState == 'loading') {
+        if (updateState === 'loading') {
             stateBar = (
                 <View style={styles.statusBar}>
                     <Text style={styles.statusBarText}>正在更新汇率...</Text>
@@ -164,11 +162,11 @@ class CalculatorApp extends Component {
                 <View style={styles.statusBar}>
                     <Text style={styles.statusBarText}>
                         {
-                            (this.props.updateState == 'loadFailed' ? this.props.updateError+"\n" : "") +
-                            (this.props.updateTime ? "上次更新时间 "+Utils.formatDate(new Date(this.props.updateTime), "yyyy-MM-dd hh:mm:ss") : "")
+                            (updateState === 'loadFailed' ? updateError+"\n" : "") +
+                            (updateTime ? "上次更新时间 "+Utils.formatDate(new Date(updateTime), "yyyy-MM-dd hh:mm:ss") : "")
                         }
                     </Text>
-                    <TouchableOpacity style={styles.statusBarBtn} onPress={() => this.props.dispatch(updateCurrencyList())}>
+                    <TouchableOpacity style={styles.statusBarBtn} onPress={() => dispatch(updateCurrencyList())}>
                         <Text style={styles.statusBarBtnText}>重新加载</Text>
                     </TouchableOpacity>
                 </View>
@@ -177,7 +175,7 @@ class CalculatorApp extends Component {
 
         return (
             <View style={styles.container}>
-                <ScrollView style={styles.calculateList} keyboardShouldPersistTaps={true}>
+                <ScrollView style={styles.calculateList} keyboardShouldPersistTaps="handled">
                     {this.getCurrencyViewList()}
                 </ScrollView>
 
@@ -187,7 +185,6 @@ class CalculatorApp extends Component {
                 <KeyBoard style={styles.keyboard} onPress={(payload) => this.onKeyClick(payload)} />
 
                 {
-                    // <CurrencyListModal {...this.props} ref="CurrencyListModal" />
                      <CurrencyListPopup {...this.props} ref={(ref) => this.currencyListPopupRef = ref} onClosed={this.onPopupClosed} />
                 }
 
@@ -206,7 +203,7 @@ class CalculatorApp extends Component {
     }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f2f2f2',

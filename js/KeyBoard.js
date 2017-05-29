@@ -27,30 +27,39 @@ export default class KeyBoard extends Component {
 
     }
 
-
-
     render() {
 
         let numKeyContent = (
-            <View>
+            <View style={styles.numberKeyContainer}>
                 <View style={styles.numKeyLine}>
                     <KeyButton style={styles.numKey} payload={keyMap[7]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[8]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[9]} onPress={this.props.onPress}/>
                 </View>
+                <View style={styles.separatorH} />
                 <View style={styles.numKeyLine}>
                     <KeyButton style={styles.numKey} payload={keyMap[4]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[5]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[6]} onPress={this.props.onPress}/>
                 </View>
+                <View style={styles.separatorH} />
                 <View style={styles.numKeyLine}>
                     <KeyButton style={styles.numKey} payload={keyMap[1]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[2]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[3]} onPress={this.props.onPress}/>
                 </View>
+                <View style={styles.separatorH} />
                 <View style={styles.numKeyLine}>
                     <KeyButton style={styles.numKey} payload={keyMap["blank"]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap[0]} onPress={this.props.onPress}/>
+                    <View style={styles.separatorV} />
                     <KeyButton style={styles.numKey} payload={keyMap["dot"]} onPress={this.props.onPress}/>
                 </View>
             </View>
@@ -59,7 +68,9 @@ export default class KeyBoard extends Component {
         let fnKeyContent = (
             <View>
                 <KeyButton style={styles.fnKey} payload={keyMap["clear"]} onPress={this.props.onPress}/>
+                <View style={styles.separatorH} />
                 <KeyButton style={styles.fnKey} payload={keyMap["delete"]} onPress={this.props.onPress}/>
+                <View style={styles.separatorH} />
                 <KeyButton style={styles.fnKey} payload={keyMap["tab"]} onPress={this.props.onPress}/>
             </View>
         );
@@ -67,6 +78,7 @@ export default class KeyBoard extends Component {
         return (
             <View style={[styles.container, this.props.style]}>
                 {numKeyContent}
+                <View style={styles.separatorV} />
                 {fnKeyContent}
             </View>
         );
@@ -76,6 +88,9 @@ export default class KeyBoard extends Component {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
+    },
+    numberKeyContainer: {
+        flex: 1,
     },
     numKeyLine: {
         flexDirection: 'row',
@@ -96,4 +111,12 @@ const styles = StyleSheet.create({
     fnKey: {
         width: KEY_FN_WIDTH,
     },
+    separatorH: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: "#dfdfdf",
+    },
+    separatorV: {
+        width: StyleSheet.hairlineWidth,
+        backgroundColor: "#dfdfdf",
+    }
 });
