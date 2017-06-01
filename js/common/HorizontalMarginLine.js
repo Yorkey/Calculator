@@ -10,7 +10,7 @@ import {
 export default class HorizontalMarginLine extends Component {
 
     static defaultProps = {
-        margin: 14,
+        margin: 15,
         backgroundColor: '#fff',
     }
 
@@ -25,7 +25,7 @@ export default class HorizontalMarginLine extends Component {
     render() {
         return (
             <View style={[{backgroundColor: this.props.backgroundColor}, this.props.style]}>
-                <View style={[styles.horizontalLine, {marginLeft: this.props.margin, marginRight: this.props.margin}]} />
+                <View style={[styles.horizontalLine, {marginLeft: this.props.margin}]} />
             </View>
         );
     }

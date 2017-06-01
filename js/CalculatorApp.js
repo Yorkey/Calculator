@@ -17,20 +17,17 @@ import HorizontalMarginLine from './common/HorizontalMarginLine';
 import CurrencyListPopup from './CurrencyListPopup';
 import {connect} from 'react-redux';
 import Utils from './utils';
-import {highlightSelectLine, highlightIcon, calculateMoney, updateCurrencyList, closeShopTip} from './actions/currency';
+import Action from './actions/index';
+import UpdateCurrencyAction from './actions/UpdateCurrencyAction';
 import codePush from 'react-native-code-push';
 import KeyBoard from './KeyBoard';
-import {showListLength} from './reducers/currency';
+import CursorView from "./CursorView";
 
 class CalculatorApp extends Component {
 
     // 构造
     constructor(props) {
         super(props);
-
-        this.state = {
-            showTip: this.props.showTip,
-        };
 
         this.currencyListPopupRef = null;
 
@@ -40,53 +37,59 @@ class CalculatorApp extends Component {
     }
 
 
-    onChangeText(text) {
-
-        this.props.dispatch(calculateMoney(text));
+    onChangeText(value, key, showType) {
+        this.props.dispatch(Action.translateValue(value, key, showType));
     }
 
     onSelectLine(index) {
-        this.props.dispatch(highlightSelectLine(index));
+        this.props.dispatch(Action.highlightLine(index));
     }
 
     onIconClick(index) {
+        this.props.dispatch(Action.highlightIcon(index));
         this.currencyListPopupRef.open(index);
-        this.props.dispatch(highlightIcon(index));
     }
 
     onPopupClosed() {
-        this.props.dispatch(highlightIcon(-1));
+        this.props.dispatch(Action.clearHighlightIcon());
+    }
+
+    onUpdateQuote() {
+        let {showType, showList, translateMap, highlightLine} = this.props;
+        let highlightItem = showList[showType][highlightLine];
+        let translateItem = translateMap[showType][highlightItem];
+        this.props.dispatch(UpdateCurrencyAction.updateQuote(translateItem.value, highlightItem, showType));
     }
 
     onTipClicked() {
-        this.setState({
-            showTip: false,
-        });
+        this.props.dispatch(Action.hideCurrencyGuide());
     }
 
     onKeyClick(payload) {
-        let currency = this.props.currencyList[this.props.showList[this.props.highlightLine]];
+        let {showType, showList, translateMap, highlightLine} = this.props;
+        let highlightItem = showList[showType][highlightLine];
+        let translateItem = translateMap[showType][highlightItem];
         let newMoney, oldMoney;
         switch (payload.type) {
             case 'number':
-                newMoney = String(currency.money) + payload.text;
-                this.onChangeText(newMoney);
+                newMoney = translateItem.value + payload.text;
+                this.onChangeText(newMoney, highlightItem, showType);
                 break;
             case 'dot':
-                newMoney = String(currency.money) + ".";
-                this.onChangeText(newMoney);
+                newMoney = translateItem.value + ".";
+                this.onChangeText(newMoney, highlightItem, showType);
                 break;
             case 'clear':
                 newMoney = "";
-                this.onChangeText(newMoney);
+                this.onChangeText(newMoney, highlightItem, showType);
                 break;
             case 'delete':
-                oldMoney = String(currency.money);
+                oldMoney = translateItem.value;
                 newMoney = oldMoney.length > 0 ? oldMoney.substr(0, oldMoney.length-1) : "";
-                this.onChangeText(newMoney);
+                this.onChangeText(newMoney, highlightItem, showType);
                 break;
             case 'tab':
-                let nextLine = this.props.highlightLine >= showListLength-1 ? 0 : this.props.highlightLine+1;
+                let nextLine = highlightLine >= showList[showType].length-1 ? 0 : highlightLine+1;
                 this.onSelectLine(nextLine);
                 break;
             default:
@@ -96,8 +99,8 @@ class CalculatorApp extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
-            this.props.dispatch(highlightSelectLine(0));
-            this.props.dispatch(updateCurrencyList());
+            this.props.dispatch(Action.highlightLine(1));
+            this.onUpdateQuote();
         });
 
         BackHandler.addEventListener('hardwareBackPress', () => {
@@ -111,34 +114,45 @@ class CalculatorApp extends Component {
             return true;
         });
 
-        if (this.props.showTip) {
-            this.props.dispatch(closeShopTip());
-        }
     }
 
 
-
     getCurrencyViewList() {
+        let {showType, showList, translateMap, highlightLine, highlightIcon} = this.props;
         let currencyViewList = [];
-        let calculateListLength = this.props.showList.length;
+        let calculateListLength = showList[showType].length;
         for (let i = 0; i < calculateListLength; ++i) {
-            let currency = this.props.currencyList[this.props.showList[i]];
+            let showItem = showList[showType][i];
+            let translateItem = translateMap[showType][showItem];
             currencyViewList.push(
-                <TouchableOpacity ref={currency.key}
-                                  key={currency.key+i}
-                                  style={this.props.highlightLine === i ? styles.highlightItem : styles.calculateItem}
+                <TouchableOpacity ref={translateItem.key}
+                                  key={translateItem.key+i}
+                                  style={highlightLine === i ? styles.highlightItem : styles.calculateItem}
                                   activeOpacity={0.8}
                                   onPress={() => this.onSelectLine(i)}>
                     <TouchableOpacity onPress={() => this.onIconClick(i)}>
-                        <Image style={[styles.currencyIcon, this.props.highlightIcon === i ? styles.highlightIcon : null]} resizeMode="stretch" source={currency.icon}/>
+                        <Image style={[styles.currencyIcon, highlightIcon === i ? styles.highlightIcon : null]} resizeMode="stretch" source={translateItem.icon}/>
                     </TouchableOpacity>
-                    <Text style={[styles.currencyName, this.props.highlightLine === i ? styles.highlightColor : null]}>{currency.name}</Text>
+                    <Text style={[styles.currencyName, highlightLine === i ? styles.highlightColor : null]}>{translateItem.name}</Text>
 
-                    <Text style={[styles.currencyInput, this.props.highlightLine === i ? styles.highlightColor : null]}>{currency.money}</Text>
+                    <Text style={[styles.currencyInput, highlightLine === i ? styles.highlightColor : null]}>
+                        {
+                            translateItem.value === "" ?
+                                <Text style={styles.currencyInputHint}>{translateItem.rate.toFixed(3)}</Text>
+                                :
+                                null
+                        }
+                        {translateItem.value}
+                    </Text>
+
+                    {
+                        (highlightLine === i) && <CursorView />
+                    }
+
 
                 </TouchableOpacity>
             );
-            if (i != calculateListLength-1) {
+            if (i !== calculateListLength-1) {
                 currencyViewList.push(<HorizontalMarginLine key={"CurrencyViewListSeparator"+i}/>);
             }
         }
@@ -146,32 +160,38 @@ class CalculatorApp extends Component {
         return currencyViewList;
     }
 
+    _getCurrencyStateBar() {
+        let {showType, loadingQuote, loadQuoteError, updateTime,} = this.props;
+        if (showType === "currency") {
+            if (loadingQuote) {
+                return (
+                    <View style={styles.statusBar}>
+                        <Text style={styles.statusBarText}>正在更新汇率...</Text>
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={styles.statusBar}>
+                        <Text style={styles.statusBarText}>
+                            {
+                                (loadQuoteError ? loadQuoteError+"\n" : "") +
+                                (updateTime ? "上次更新时间 "+Utils.formatDate(new Date(updateTime), "yyyy-MM-dd hh:mm:ss") : "")
+                            }
+                        </Text>
+                        <TouchableOpacity style={styles.statusBarBtn} onPress={() => this.onUpdateQuote()}>
+                            <Text style={styles.statusBarBtnText}>重新加载</Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+            }
+        } else {
+            return null;
+        }
+    }
 
     render() {
 
-        let {dispatch, updateState, updateError, updateTime} = this.props;
-        let stateBar;
-        if (updateState === 'loading') {
-            stateBar = (
-                <View style={styles.statusBar}>
-                    <Text style={styles.statusBarText}>正在更新汇率...</Text>
-                </View>
-            )
-        } else {
-            stateBar = (
-                <View style={styles.statusBar}>
-                    <Text style={styles.statusBarText}>
-                        {
-                            (updateState === 'loadFailed' ? updateError+"\n" : "") +
-                            (updateTime ? "上次更新时间 "+Utils.formatDate(new Date(updateTime), "yyyy-MM-dd hh:mm:ss") : "")
-                        }
-                    </Text>
-                    <TouchableOpacity style={styles.statusBarBtn} onPress={() => dispatch(updateCurrencyList())}>
-                        <Text style={styles.statusBarBtnText}>重新加载</Text>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
+        let {showCurrencyGuide} = this.props;
 
         return (
             <View style={styles.container}>
@@ -180,7 +200,7 @@ class CalculatorApp extends Component {
                 </ScrollView>
 
 
-                {stateBar}
+                { this._getCurrencyStateBar() }
 
                 <KeyBoard style={styles.keyboard} onPress={(payload) => this.onKeyClick(payload)} />
 
@@ -189,7 +209,7 @@ class CalculatorApp extends Component {
                 }
 
                 {
-                    this.state.showTip &&
+                    showCurrencyGuide &&
                     <TouchableOpacity style={styles.tipBackground} activeOpacity={1.0} onPress={this.onTipClicked}>
                         <View style={styles.tipContainer}>
                             <Image style={styles.tipArrow} source={require("./asset/tip-arrow.png")}/>
@@ -202,6 +222,20 @@ class CalculatorApp extends Component {
         );
     }
 }
+
+function select(store) {
+    return {
+        highlightLine: store.highlightLine,
+        highlightIcon: store.highlightIcon,
+        showCurrencyGuide: store.showCurrencyGuide,
+        ...store.listInfo,
+        ...store.translateListInfo,
+    };
+}
+
+export default codePush((connect(select)(CalculatorApp)));
+//export default codePush({ updateDialog: true, installMode: codePush.InstallMode.IMMEDIATE })(connect(select)(CalculatorApp));
+//module.exports = connect(CalculatorApp);
 
 const styles = StyleSheet.create({
     container: {
@@ -220,12 +254,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 60,
         backgroundColor: '#ffffff',
+        paddingRight: 10,
     },
     highlightItem: {
         flexDirection: 'row',
         alignItems: 'center',
         height: 70,
         backgroundColor: '#ffffff',
+        paddingRight: 10,
     },
     highlightColor: {
         color: '#ff7f50',
@@ -249,10 +285,17 @@ const styles = StyleSheet.create({
     },
     currencyInput: {
         flex: 1,
-        marginRight: 10,
         textAlign: 'right',
         fontSize: 18,
         color: '#333333',
+    },
+    currencyInputHint: {
+        color: '#ccc',
+    },
+    cursor: {
+        width: 1.5,
+        height: 50,
+        backgroundColor: "#ff7f50"
     },
     statusBar: {
         height: 40,
@@ -310,13 +353,3 @@ const styles = StyleSheet.create({
         color: "rgba(255,255,255,0.8)",
     }
 });
-
-function select(store) {
-    return {
-        ...store.currency
-    };
-}
-
-export default codePush((connect(select)(CalculatorApp)));
-//export default codePush({ updateDialog: true, installMode: codePush.InstallMode.IMMEDIATE })(connect(select)(CalculatorApp));
-//module.exports = connect(CalculatorApp);

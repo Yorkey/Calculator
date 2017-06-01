@@ -4,7 +4,7 @@
 
 const HIGHLIGHT_LINE = "HIGHLIGHT_LINE";
 const HIGHLIGHT_ICON = "HIGHLIGHT_ICON";
-const CHANGE_LIST_VALUE = "CHANGE_LIST_VALUE";
+const TRANSLATE_VALUE = "TRANSLATE_VALUE";
 const CHANGE_SHOW_LIST = "CHANGE_SHOW_LIST";
 const CHANGE_SHOW_TYPE = "CHANGE_SHOW_TYPE";
 const FETCH_QUOTE_LIST = "FETCH_QUOTE_LIST";
@@ -33,11 +33,13 @@ export default {
         }
     },
 
-    CHANGE_LIST_VALUE,
-    translateValue: (money: String) => {
+    TRANSLATE_VALUE,
+    translateValue: (value: String, key: String, showType: String) => {
         return {
-            type: CHANGE_LIST_VALUE,
-            money,
+            type: TRANSLATE_VALUE,
+            value: value,
+            key,
+            showType,
         }
     },
 

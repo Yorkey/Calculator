@@ -16,16 +16,17 @@ import {
 import HorizontalMarginLine from './common/HorizontalMarginLine';
 import HorizontalLine from './common/HorizontalLine';
 import Button from 'react-native-button';
-import {changeShowList} from './actions/currency';
+import Action from './actions/index';
+import { translateTypeList } from "./reducers/index";
 let Modal = require("react-native-modalbox");
 
 function CurrencyItem({item, index, onPress}) {
 
     return (
-        <TouchableOpacity style={styles.listItem} activeOpacity={0.8} onPress={() => onPress && onPress(index)}>
+        <TouchableOpacity style={styles.listItem} activeOpacity={0.8} onPress={() => onPress && onPress(index, item)}>
             <Image style={styles.currencyIcon} resizeMode="stretch" source={item.icon} />
             <Text style={styles.currencyName}>{item.name}</Text>
-            <Text style={styles.currencyRate}>{item.rate.toFixed(3)}</Text>
+            <Text style={styles.currencyRate}>{item.rate.toFixed(4)}</Text>
         </TouchableOpacity>
     );
 }
@@ -39,10 +40,10 @@ export default class CurrencyListModal extends Component {
         this.selectLine = 0;
     }
 
-    onListItemClick = (index) => {
+    onListItemClick = (index, item) => {
         this.refs.popup.close();
         InteractionManager.runAfterInteractions(() => {
-            this.props.dispatch(changeShowList(this.selectLine, index));
+            this.props.dispatch(Action.changeShowList(this.props.highlightIcon, item.key));
         });
     };
 
@@ -56,12 +57,14 @@ export default class CurrencyListModal extends Component {
     };
 
     renderItem = ({item, index}) => {
-        return <CurrencyItem item={item} index={index} onPress={this.onListItemClick} />;
+        let { showType, translateMap } = this.props;
+        let translateItem = translateMap[showType][item];
+        return <CurrencyItem item={translateItem} index={index} onPress={this.onListItemClick} />;
     };
 
     render() {
-        let { currencyList } = this.props;
-        let height = currencyList.length < 5 ? currencyList.length*50+2+28+44 : 280;
+        let { showType } = this.props;
+        let height = translateTypeList[showType].length < 5 ? translateTypeList[showType].length*50+2+28+44 : 280;
         return (
             <Modal ref="popup" style={[styles.container, {height: height}]}
                    position="bottom"
@@ -70,12 +73,13 @@ export default class CurrencyListModal extends Component {
                    onClosed={this.props.onClosed}>
                 <View style={styles.header}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>选择币种 </Text>
-                        <Text style={styles.titleRight}>当前汇率</Text>
+                        <Text style={styles.title}>{showType==="currency" ? "选择币种" : "选择单位"}</Text>
+                        <Text style={styles.titleRight}>{showType==="currency" ? "当前汇率" : "比例"}</Text>
                     </View>
                     <HorizontalLine />
                 </View>
-                <FlatList data={currencyList}
+                <FlatList data={translateTypeList[showType]}
+                          keyExtractor={(item, index) => item}
                           renderItem={this.renderItem}
                           ItemSeparatorComponent={HorizontalMarginLine}
                           ListFooterComponent={HorizontalLine}/>

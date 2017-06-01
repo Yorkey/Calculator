@@ -2,12 +2,13 @@
  * Created by wangyu on 2016/7/29.
  */
 import { AsyncStorage } from 'react-native';
-import {applyMiddleware, createStore, combineReducers} from 'redux';
+import {applyMiddleware, createStore, compose} from 'redux';
 import thunk from 'redux-thunk';
 import {persistStore, autoRehydrate} from 'redux-persist';
-import currencyReducers from '../reducers/currency';
+import indexReducer from '../reducers/index';
 var createLogger = require('redux-logger');
 
+const whitelist = ["listInfo", "translateListInfo", "showCurrencyGuide"];
 
 let logger = createLogger({
     predicate: (getState, action) => false,
@@ -15,14 +16,16 @@ let logger = createLogger({
     duration: true,
 });
 
-let reducers = combineReducers({currency: currencyReducers});
 
-let createCalculatorAppStore = applyMiddleware(thunk, logger)(createStore);
-
-function configureStore(onComplete) {
-    let store = autoRehydrate()(createCalculatorAppStore)(reducers);
-    persistStore(store, {blacklist:["highlightIcon"], storage: AsyncStorage}, onComplete);
+export default function configureStore(onComplete) {
+    const enhancer = compose(
+        applyMiddleware(
+            thunk,  // 允许我们 dispatch() 函数
+            logger,
+        ),
+        autoRehydrate(),
+    );
+    const store = createStore(indexReducer, {}, enhancer);
+    persistStore(store, {whitelist: whitelist, storage: AsyncStorage}, onComplete);
     return store;
 }
-
-module.exports = {configureStore};
