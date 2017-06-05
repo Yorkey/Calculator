@@ -44,12 +44,7 @@ tsconfig.json
 # BUCK
 buck-out/
 \.buckd/
-<<<<<<< ours
-android/app/libs
-android/keystores/debug.keystore
 
-wy-android-release-key.keystore
-=======
 *.keystore
 
 # fastlane
@@ -62,4 +57,3 @@ wy-android-release-key.keystore
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
->>>>>>> theirs
