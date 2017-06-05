@@ -37,7 +37,7 @@ let defaultTranslateMap = {
         CUN: {name: '寸', textIcon: 'cun', key: 'CUN', rate: 0.0333, value: ""},
         FEN: {name: '分', textIcon: 'fen', key: 'FEN', rate: 0.0033, value: ""},
         NMI: {name: '海里', textIcon: 'nmi', key: 'NMI', rate: 1852, value: ""},
-        MI: {name: '英里', textIcon: 'm', key: 'MI', rate: 1609.344, value: ""},
+        MI: {name: '英里', textIcon: 'mi', key: 'MI', rate: 1609.344, value: ""},
         IN: {name: '英寸', textIcon: 'in', key: 'IN', rate: 0.0254, value: ""},
     }
 };
@@ -81,6 +81,7 @@ let listInfo = (state = defaultListInfo, action) => {
         case actions.CHANGE_SHOW_LIST:
             let newList = [...state.showList[state.showType]];
             newList[action.highlightLine] = action.newKey;
+            state.showList = {...state.showList};
             state.showList[state.showType] = newList;
             return {...state};
         case actions.CHANGE_SHOW_TYPE:

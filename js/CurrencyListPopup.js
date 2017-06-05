@@ -43,7 +43,7 @@ export default class CurrencyListModal extends Component {
     onListItemClick = (index, item) => {
         this.refs.popup.close();
         InteractionManager.runAfterInteractions(() => {
-            this.props.dispatch(Action.changeShowList(this.props.highlightIcon, item.key));
+            this.props.dispatch(Action.changeShowList(this.selectLine, item.key));
         });
     };
 

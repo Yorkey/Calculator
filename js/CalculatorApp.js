@@ -117,7 +117,7 @@ class CalculatorApp extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
-            this.props.dispatch(Action.highlightLine(1));
+            this.props.dispatch(Action.highlightLine(0));
             if (this.props.showType === "currency") {
                 this.onUpdateQuote();
             }
