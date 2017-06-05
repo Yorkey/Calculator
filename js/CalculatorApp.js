@@ -34,6 +34,7 @@ class CalculatorApp extends Component {
         this.onPopupClosed = this.onPopupClosed.bind(this);
         this.onIconClick = this.onIconClick.bind(this);
         this.onTipClicked = this.onTipClicked.bind(this);
+        this.onSwitchClick = this.onSwitchClick.bind(this);
     }
 
 
@@ -48,6 +49,10 @@ class CalculatorApp extends Component {
     onIconClick(index) {
         this.props.dispatch(Action.highlightIcon(index));
         this.currencyListPopupRef.open(index);
+    }
+
+    onSwitchClick(showType) {
+        this.props.dispatch(Action.changeShowType(showType));
     }
 
     onPopupClosed() {
@@ -92,6 +97,19 @@ class CalculatorApp extends Component {
                 let nextLine = highlightLine >= showList[showType].length-1 ? 0 : highlightLine+1;
                 this.onSelectLine(nextLine);
                 break;
+            case 'more':
+                this.props.modal.popup({
+                    hideTitle: true,
+                    buttons: [
+                        {name: "汇率", value: "currency"},
+                        {name: "长度", value: "len"}
+                    ],
+                    onSubmit: (type) => {
+                        this.onSwitchClick(type);
+                        return true;
+                    },
+                });
+                break;
             default:
                 console.warn(`Unknown key type ${payload.type}`);
         }
@@ -100,7 +118,9 @@ class CalculatorApp extends Component {
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
             this.props.dispatch(Action.highlightLine(1));
-            this.onUpdateQuote();
+            if (this.props.showType === "currency") {
+                this.onUpdateQuote();
+            }
         });
 
         BackHandler.addEventListener('hardwareBackPress', () => {
@@ -127,11 +147,18 @@ class CalculatorApp extends Component {
             currencyViewList.push(
                 <TouchableOpacity ref={translateItem.key}
                                   key={translateItem.key+i}
-                                  style={highlightLine === i ? styles.highlightItem : styles.calculateItem}
+                                  style={[styles.calculateItem, highlightLine === i ? styles.highlightItem : null]}
                                   activeOpacity={0.8}
                                   onPress={() => this.onSelectLine(i)}>
-                    <TouchableOpacity onPress={() => this.onIconClick(i)}>
-                        <Image style={[styles.currencyIcon, highlightIcon === i ? styles.highlightIcon : null]} resizeMode="stretch" source={translateItem.icon}/>
+                    <TouchableOpacity style={highlightIcon === i ? styles.highlightIcon : null}
+                                      activeOpacity={0.8}
+                                      onPress={() => this.onIconClick(i)}>
+                        {
+                            translateItem.icon ?
+                                <Image style={styles.currencyIcon} resizeMode="stretch" source={translateItem.icon}/>
+                                :
+                                <Text style={styles.currencyTextIcon}>{translateItem.textIcon}</Text>
+                        }
                     </TouchableOpacity>
                     <Text style={[styles.currencyName, highlightLine === i ? styles.highlightColor : null]}>{translateItem.name}</Text>
 
@@ -254,14 +281,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 60,
         backgroundColor: '#ffffff',
+        paddingLeft: 10,
         paddingRight: 10,
     },
     highlightItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
         height: 70,
-        backgroundColor: '#ffffff',
-        paddingRight: 10,
     },
     highlightColor: {
         color: '#ff7f50',
@@ -269,7 +293,13 @@ const styles = StyleSheet.create({
     currencyIcon: {
         width: 50,
         height: 33,
-        marginLeft: 14,
+    },
+    currencyTextIcon: {
+        width: 50,
+        paddingLeft: 10,
+        fontSize: 20,
+        color: "#333",
+        fontWeight: "bold",
     },
     highlightIcon: {
         padding: 1,

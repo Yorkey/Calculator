@@ -100,13 +100,15 @@ export let Dialog = ComponsedComponent => class extends React.Component {
         config = Object.assign(config, opts);
 
         if(opts.buttons) {
-            config.content = opts.buttons.map(function(item, index) {
-                return <TouchableOpacity key={index} onPress={()=>this.popupClickHandler(item.value)}>
-                    <View style={[styles.modalPopupTitle, styles.modalFullWidth, {borderTopWidth:StyleSheet.hairlineWidth, borderTopColor:'#dfdfdf'}]}>
-                        <Text style={[styles.modalFullWidth, styles.popupButton]}>{item.name}</Text>
-                    </View>
-                </TouchableOpacity>;
-            }.bind(this));
+            config.content = opts.buttons.map((item, index) => {
+                return (
+                    <TouchableOpacity key={index} onPress={()=>this.popupClickHandler(item.value)}>
+                        <View style={[styles.modalPopupTitle, styles.modalFullWidth, {borderTopWidth:StyleSheet.hairlineWidth, borderTopColor:'#dfdfdf'}]}>
+                            <Text style={[styles.modalFullWidth, styles.popupButton]}>{item.name}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+            });
         }
         else if(typeof opts.content != 'undefined') {
             config.content = opts.content;

@@ -63,9 +63,10 @@ const keyMap = {
         text: "Tab",
         icon: require('./asset/tab.png')
     },
-    "blank": {
-        type: "blank",
-        text: " "
+    "more": {
+        type: "more",
+        text: "more",
+        icon: require('./asset/more.png')
     }
 };
 

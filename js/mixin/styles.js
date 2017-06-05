@@ -89,9 +89,9 @@ export default StyleSheet.create({
         width:Dimensions.get('window').width
     },
     modalPopupList:{
-        flex:1,
+        //flex:1,
         backgroundColor:'#fff',
-        justifyContent:'center'
+        //justifyContent:'center'
     },
     modalToast:{
         backgroundColor:"transparent",
