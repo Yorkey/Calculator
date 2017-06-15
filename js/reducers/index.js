@@ -7,7 +7,7 @@ import UpdateCurrencyAction from "../actions/UpdateCurrencyAction";
 
 export const translateTypeList = {
     currency: ["CNY", "USD", "HKD", "JPY", "EUR", "GBP", "THB", "KRW", "CAD", "IDR", "SGD", "AUD"],
-    len: ["KM", "M", "DM", "CM", "MM", "LI", "ZH", "CHI", "CUN", "FEN", "NMI", "MI", "IN"],
+    len: ["KM", "M", "DM", "CM", "MM", "LI", "ZH", "CHI", "CUN", "FEN", "NMI", "MI", "IN", "YD"],
 };
 
 let defaultTranslateMap = {
@@ -26,19 +26,20 @@ let defaultTranslateMap = {
         AUD: {name: '澳元', icon: require('../asset/country-icon/AUD.png'), key: 'AUD', rate: 1.0, value: ""},
     },
     len: {
-        KM: {name: '千米', textIcon: 'km', key: 'KM', rate: 1000.0, value: ""},
+        KM: {name: '千米', textIcon: 'km', key: 'KM', rate: 0.001, value: ""},
         M: {name: '米', textIcon: 'm', key: 'M', rate: 1.0, value: ""},
-        DM: {name: '分米', textIcon: 'dm', key: 'DM', rate: 0.1, value: ""},
-        CM: {name: '厘米', textIcon: 'cm', key: 'CM', rate: 0.01, value: ""},
-        MM: {name: '毫米', textIcon: 'mm', key: 'MM', rate: 0.001, value: ""},
-        LI: {name: '里', textIcon: 'li', key: 'LI', rate: 500.0, value: ""},
-        ZH: {name: '丈', textIcon: 'zh', key: 'ZH', rate: 3.3333, value: ""},
-        CHI: {name: '尺', textIcon: 'chi', key: 'CHI', rate: 0.3333, value: ""},
-        CUN: {name: '寸', textIcon: 'cun', key: 'CUN', rate: 0.0333, value: ""},
-        FEN: {name: '分', textIcon: 'fen', key: 'FEN', rate: 0.0033, value: ""},
-        NMI: {name: '海里', textIcon: 'nmi', key: 'NMI', rate: 1852, value: ""},
-        MI: {name: '英里', textIcon: 'mi', key: 'MI', rate: 1609.344, value: ""},
-        IN: {name: '英寸', textIcon: 'in', key: 'IN', rate: 0.0254, value: ""},
+        DM: {name: '分米', textIcon: 'dm', key: 'DM', rate: 10, value: ""},
+        CM: {name: '厘米', textIcon: 'cm', key: 'CM', rate: 100, value: ""},
+        MM: {name: '毫米', textIcon: 'mm', key: 'MM', rate: 1000, value: ""},
+        LI: {name: '里', textIcon: 'li', key: 'LI', rate: 0.002, value: ""},
+        ZH: {name: '丈', textIcon: 'zh', key: 'ZH', rate: 0.3, value: ""},
+        CHI: {name: '尺', textIcon: 'chi', key: 'CHI', rate: 3.0, value: ""},
+        CUN: {name: '寸', textIcon: 'cun', key: 'CUN', rate: 30.0, value: ""},
+        FEN: {name: '分', textIcon: 'fen', key: 'FEN', rate: 300, value: ""},
+        NMI: {name: '海里', textIcon: 'nmi', key: 'NMI', rate: 0.00054, value: ""},
+        MI: {name: '英里', textIcon: 'mi', key: 'MI', rate: 0.0006214, value: ""},
+        IN: {name: '英寸', textIcon: 'in', key: 'IN', rate: 39.3700787, value: ""},
+        YD: {name: '码', textIcon: 'yd', key: 'YD', rate: 1.0936133, value: ""},
     }
 };
 

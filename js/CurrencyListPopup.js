@@ -26,7 +26,7 @@ function CurrencyItem({item, index, onPress}) {
         <TouchableOpacity style={styles.listItem} activeOpacity={0.8} onPress={() => onPress && onPress(index, item)}>
             <Image style={styles.currencyIcon} resizeMode="stretch" source={item.icon} />
             <Text style={styles.currencyName}>{item.name}</Text>
-            <Text style={styles.currencyRate}>{item.rate.toFixed(4)}</Text>
+            <Text style={styles.currencyRate}>{item.rate.toFixed(7)}</Text>
         </TouchableOpacity>
     );
 }
